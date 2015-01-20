@@ -1,0 +1,4 @@
+
+
+Welcome <c:out value="${user.login}"/>. You loged as <c:out value="${userRole.name}"/>.<br>
+Your IP is <c:out value="${ip}"/>
