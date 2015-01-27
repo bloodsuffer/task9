@@ -2,11 +2,13 @@ drop database deposit;
 create database deposit;
 use deposit;
 create table client ( 
-id_client int NOT NULL AUTO_INCREMENT,
+id int NOT NULL AUTO_INCREMENT,
 name varchar(50), 
 address varchar(50),
 number int,
-PRIMARY KEY (id_client) 
+user_id int,
+PRIMARY KEY (id_client),
+FOREIGN KEY (user_id) REFERENCES users(id)
 ); 
 
 create table account ( 
