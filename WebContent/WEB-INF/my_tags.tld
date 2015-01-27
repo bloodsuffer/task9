@@ -1,0 +1,15 @@
+<taglib>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>2.0</jsp-version>
+  <short-name>Example TLD</short-name>
+  <tag>
+    <name>clTag</name>
+    <tag-class>ua.kpi.zavizionov.Task9.tag.ClientTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+       <name>client</name>
+       <type>ua.kpi.zavizionov.Task9.db.entity.Client</type>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+</taglib>

@@ -9,12 +9,16 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import ua.kpi.zavizionov.Task9.db.entity.Account;
+import ua.kpi.zavizionov.Task9.db.entity.Client;
 import ua.kpi.zavizionov.Task9.db.entity.Role;
 import ua.kpi.zavizionov.Task9.db.entity.User;
 public class DBService {
 	
 	private static final String SQL_SELECT_USER_BY_LOGIN = "select * from users where login = ?";
 	private static final String SQL_SELECT_ROLE = "select * from roles where id = ?";
+	private static final String SQL_SELECT_ACCOUNTS  = "select * from account";
+	private static final String SQL_SELECT_CLIENT = "select * from client where id = ?";
 	//Singleton
 	
 		private static DBService instance;
@@ -57,6 +61,23 @@ public class DBService {
 			return role;
 		}
 		
+		public Client getClientByPK(int id){
+			DBService service = DBService.getInstance();
+			Connection con = null;
+			PreparedStatement statement = null;
+			ResultSet rs = null;
+			Client client = null;
+			try {
+				con = service.getConnection();
+				statement = con.prepareStatement(SQL_SELECT_CLIENT);
+				statement.setInt(1, id);
+				rs = statement.executeQuery();
+				client = parseClientResultSet(rs).iterator().next();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return client;
+		}
 		
 		
 		
@@ -77,6 +98,24 @@ public class DBService {
 			}
 			
 			return user;
+		}
+		
+		public List<Account> getAllAccounts(){
+			DBService service = DBService.getInstance();
+			Connection con = null;
+			PreparedStatement statement = null;
+			ResultSet rs = null;
+			List<Account> result = null;
+			try {
+				con = service.getConnection();
+				statement = con.prepareStatement(SQL_SELECT_ACCOUNTS);
+				rs = statement.executeQuery();
+				result = parseAccountResultSet(rs);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			return result;
 		}
 		
 		public List<User> parseUserResultSet(ResultSet rs){
@@ -106,6 +145,44 @@ public class DBService {
 					role.setId(rs.getInt(Fields.ID));
 					role.setName(rs.getString(Fields.ROLE_NAME));
 					result.add(role);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return result;
+		}
+		
+		public List<Account> parseAccountResultSet(ResultSet rs){
+			List<Account> result = new ArrayList<Account>();
+			try {
+				while (rs.next()){
+					Account account = new Account();
+					account.setId(rs.getInt(Fields.ID));
+					account.setBank(rs.getString(Fields.ACCOUNT_BANK));
+					account.setOpenDate(rs.getDate(Fields.ACCOUNT_OPEN_DATE));
+					account.setCloseDate(rs.getDate(Fields.ACCOUNT_CLOSE_DATE));
+					account.setCurrency(rs.getString(Fields.ACCOUNT_CURRENCY));
+					account.setBalance(rs.getFloat(Fields.ACCOUNT_BALANCE));
+					account.setClient(this.getClientByPK(rs.getInt(Fields.ACCOUNT_CLIENT_ID)));
+					result.add(account);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return result;
+		}
+		
+		public List<Client> parseClientResultSet(ResultSet rs){
+			List<Client> result = new ArrayList<Client>();
+			try {
+				while (rs.next()){
+					Client c = new Client();
+					c.setId(rs.getInt(Fields.ID));
+					c.setName(rs.getString(Fields.CLIENT_NAME));
+					c.setAddress(rs.getString(Fields.CLIENT_ADDRESS));
+					c.setNumber(rs.getInt(Fields.CLIENT_NUMBER));
+					//user
+					result.add(c);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
